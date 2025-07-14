@@ -221,10 +221,17 @@ The CI/CD pipeline with **GitHub Actions** will be streamlined for the monolithi
 *   **Task 2.3: Create a "Health Check" component that calls the backend's `/api/health` endpoint and displays the status.** (Completed)
 *   **Task 2.4: Set up Clerk for user authentication.** (Completed)
 
-### Epic 3: User Management & Authentication
+### Epic 3: User Management & Authentication (Completed)
 
 *   **Task 3.5: Create a protected route for a /dashboard page that redirects to a sign-in page if the user is not logged in.** (Completed)
 *   **Task 3.6: Create a UserService in the Spring Boot backend that, upon a user's first authenticated API call, saves their Clerk userId and email into the users table.** (Completed)
+
+### Epic 4: Receipt Upload (UI and Backend Stub) (Completed)
+
+*   **Task 4.1: In the React frontend, create a new page at /upload containing a form with a file input that accepts only image files (image/*).** (Completed)
+*   **Task 4.2: When a user selects a file, display a preview of the image on the page.** (Completed)
+*   **Task 4.3: In the Spring Boot backend, create a new REST controller ReceiptController with a POST endpoint at /api/v1/receipts/upload. For now, this endpoint should just accept a MultipartFile and return a success message.** (Completed)
+*   **Task 4.4: Connect the React upload form to the backend. When the form is submitted, send the image file to the /api/v1/receipts/upload endpoint using a multipart/form-data request. Ensure the authenticated user's JWT is included in the request header.** (Completed)
 
 ## 9. Future Plans
 
