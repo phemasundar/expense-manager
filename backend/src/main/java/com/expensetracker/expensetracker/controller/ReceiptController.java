@@ -1,12 +1,12 @@
 package com.expensetracker.expensetracker.controller;
 
-import com.expensetracker.expensetracker.service.OcrService;
+import com.expensetracker.expensetracker.dto.UploadResponse;
+import com.expensetracker.expensetracker.entity.Receipt;
+import com.expensetracker.expensetracker.repository.ReceiptRepository;
+import com.expensetracker.expensetracker.service.ReceiptService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -15,22 +15,31 @@ import java.io.IOException;
 @RequestMapping("/api/v1/receipts")
 public class ReceiptController {
 
-    private final OcrService ocrService;
+    private final ReceiptService receiptService;
+    private final ReceiptRepository receiptRepository;
 
-    public ReceiptController(OcrService ocrService) {
-        this.ocrService = ocrService;
+    public ReceiptController(ReceiptService receiptService, ReceiptRepository receiptRepository) {
+        this.receiptService = receiptService;
+        this.receiptRepository = receiptRepository;
     }
 
     @Operation(summary = "Upload a receipt image for OCR processing")
     @PostMapping("/upload")
-    public ResponseEntity<String> uploadReceipt(@RequestParam("file") MultipartFile file) {
+    public ResponseEntity<UploadResponse> uploadReceipt(@RequestParam("file") MultipartFile file) {
         try {
-            String extractedText = ocrService.extractTextFromImage(file.getBytes());
-            System.out.println("Extracted Text: " + extractedText);
-            return ResponseEntity.ok(extractedText);
+            UploadResponse response = receiptService.processReceipt(file);
+            return ResponseEntity.ok(response);
         } catch (IOException e) {
             e.printStackTrace();
-            return ResponseEntity.status(500).body("Error processing image.");
+            return ResponseEntity.status(500).build();
         }
+    }
+
+    @Operation(summary = "Get a receipt by its ID")
+    @GetMapping("/{id}")
+    public ResponseEntity<Receipt> getReceipt(@PathVariable Long id) {
+        return receiptRepository.findById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 }
