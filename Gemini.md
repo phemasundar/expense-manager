@@ -233,6 +233,14 @@ The CI/CD pipeline with **GitHub Actions** will be streamlined for the monolithi
 *   **Task 4.3: In the Spring Boot backend, create a new REST controller ReceiptController with a POST endpoint at /api/v1/receipts/upload. For now, this endpoint should just accept a MultipartFile and return a success message.** (Completed)
 *   **Task 4.4: Connect the React upload form to the backend. When the form is submitted, send the image file to the /api/v1/receipts/upload endpoint using a multipart/form-data request. Ensure the authenticated user's JWT is included in the request header.** (Completed)
 
+### Epic 5: OCR Integration & Processing (Completed)
+
+*   **Task 5.1: In the Spring Boot backend, add the Google Cloud Vision client library dependency.** (Completed)
+*   **Task 5.2: Configure the application to use your Google Cloud credentials for the Vision API (preferably via environment variables).** (Completed)
+*   **Task 5.3: Create an OcrService class in the backend. This service should have a method that takes the byte array of an image as input, sends it to the Google Cloud Vision API for TEXT_DETECTION, and returns the raw text result.** (Completed)
+*   **Task 5.4: Modify the /api/v1/receipts/upload endpoint. After receiving the file, call the OcrService to get the extracted text.** (Completed)
+*   **Task 5.5: For now, simply log the extracted text to the console and return it in the API response to the frontend.** (Completed)
+
 ## 9. Future Plans
 
   * **Migration to Microservices**: As the application scales, the modular design of the monolith will allow us to break out individual modules (e.g., Analytics, User management) into separate microservices with minimal friction.

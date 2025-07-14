@@ -35,3 +35,11 @@ This project is a web application designed to help users track their grocery exp
 *   When a user selects a file, a preview of the image is displayed on the page.
 *   In the Spring Boot backend, created a new REST controller `ReceiptController` with a POST endpoint at `/api/v1/receipts/upload`.
 *   Connected the React upload form to the backend to send the image file to the `/api/v1/receipts/upload` endpoint.
+
+### Epic 5: OCR Integration & Processing (Completed)
+
+*   In the Spring Boot backend, added the Google Cloud Vision client library dependency.
+*   Configured the application to use Google Cloud credentials for the Vision API.
+*   Created an `OcrService` class in the backend to send image data to the Google Cloud Vision API and return the raw text result.
+*   Modified the `/api/v1/receipts/upload` endpoint to call the `OcrService`.
+*   The extracted text is now returned in the API response and displayed on the frontend.
