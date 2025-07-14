@@ -9,6 +9,8 @@ const Header: React.FC = () => {
         <SignInButton />
       </SignedOut>
       <SignedIn>
+        <a href="/dashboard">Dashboard</a>
+        <a href="/upload">Upload Receipt</a>
         <UserButton />
       </SignedIn>
     </header>

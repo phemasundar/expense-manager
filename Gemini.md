@@ -221,6 +221,11 @@ The CI/CD pipeline with **GitHub Actions** will be streamlined for the monolithi
 *   **Task 2.3: Create a "Health Check" component that calls the backend's `/api/health` endpoint and displays the status.** (Completed)
 *   **Task 2.4: Set up Clerk for user authentication.** (Completed)
 
+### Epic 3: User Management & Authentication
+
+*   **Task 3.5: Create a protected route for a /dashboard page that redirects to a sign-in page if the user is not logged in.** (Completed)
+*   **Task 3.6: Create a UserService in the Spring Boot backend that, upon a user's first authenticated API call, saves their Clerk userId and email into the users table.** (Completed)
+
 ## 9. Future Plans
 
   * **Migration to Microservices**: As the application scales, the modular design of the monolith will allow us to break out individual modules (e.g., Analytics, User management) into separate microservices with minimal friction.
