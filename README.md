@@ -43,3 +43,11 @@ This project is a web application designed to help users track their grocery exp
 *   Created an `OcrService` class in the backend to send image data to the Google Cloud Vision API and return the raw text result.
 *   Modified the `/api/v1/receipts/upload` endpoint to call the `OcrService`.
 *   The extracted text is now returned in the API response and displayed on the frontend.
+
+### Epic 6: Displaying and Correcting OCR Results (In Progress)
+
+*   In the React frontend, after a successful upload, redirect the user to a "Review Receipt" page (`/receipts/{id}/review`). The extracted text from the API response should be displayed on this page.
+
+### Epic 7: API Documentation (Completed)
+
+*   Generated Swagger documentation for the existing APIs.

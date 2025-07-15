@@ -241,6 +241,14 @@ The CI/CD pipeline with **GitHub Actions** will be streamlined for the monolithi
 *   **Task 5.4: Modify the /api/v1/receipts/upload endpoint. After receiving the file, call the OcrService to get the extracted text.** (Completed)
 *   **Task 5.5: For now, simply log the extracted text to the console and return it in the API response to the frontend.** (Completed)
 
+### Epic 6: Displaying and Correcting OCR Results (In Progress)
+
+*   **Task 6.1: In the React frontend, after a successful upload, redirect the user to a "Review Receipt" page (/receipts/{id}/review). The extracted text from the API response should be displayed on this page.** (Completed)
+
+### Epic 7: API Documentation (Completed)
+
+*   **Task 7.1: Generate Swagger documentation for the existing APIs.** (Completed)
+
 ## 9. Future Plans
 
   * **Migration to Microservices**: As the application scales, the modular design of the monolith will allow us to break out individual modules (e.g., Analytics, User management) into separate microservices with minimal friction.
