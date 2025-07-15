@@ -17,5 +17,9 @@ public class Store {
     @Column(name = "location")
     private String location;
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     // Getters and Setters
 }

@@ -5,6 +5,8 @@ import { useNavigate } from 'react-router-dom';
 const UploadReceipt: React.FC = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
+  const [storeName, setStoreName] = useState('');
+  const [purchaseDate, setPurchaseDate] = useState('');
   const { getToken } = useAuth();
   const navigate = useNavigate();
 
@@ -28,7 +30,7 @@ const UploadReceipt: React.FC = () => {
 
     try {
       const token = await getToken();
-      const response = await fetch('/api/v1/receipts/upload', {
+      const uploadResponse = await fetch('/api/v1/receipts/upload', {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -36,10 +38,25 @@ const UploadReceipt: React.FC = () => {
         body: formData,
       });
 
-      if (response.ok) {
-        const data = await response.json();
-        console.log('Upload response:', data);
-        navigate(`/receipts/${data.id}/review`);
+      if (uploadResponse.ok) {
+        const uploadData = await uploadResponse.json();
+        const { extractedText, imageUrl } = uploadData;
+
+        const createReceiptResponse = await fetch('/api/v1/receipts', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ storeName, purchaseDate, extractedText, imageUrl }),
+        });
+
+        if (createReceiptResponse.ok) {
+          const createReceiptData = await createReceiptResponse.json();
+          navigate(`/receipts/${createReceiptData.receipt_id}/review`);
+        } else {
+          alert('Failed to create receipt. Please try again.');
+        }
       } else {
         alert('Upload failed. Please try again.');
       }
@@ -53,6 +70,26 @@ const UploadReceipt: React.FC = () => {
     <div>
       <h2>Upload Receipt</h2>
       <form onSubmit={handleSubmit}>
+        <div>
+          <label htmlFor="storeName">Store Name:</label>
+          <input
+            type="text"
+            id="storeName"
+            value={storeName}
+            onChange={(e) => setStoreName(e.target.value)}
+            required
+          />
+        </div>
+        <div>
+          <label htmlFor="purchaseDate">Purchase Date:</label>
+          <input
+            type="date"
+            id="purchaseDate"
+            value={purchaseDate}
+            onChange={(e) => setPurchaseDate(e.target.value)}
+            required
+          />
+        </div>
         <input type="file" accept="image/*" onChange={handleFileChange} />
         <button type="submit">Upload</button>
       </form>

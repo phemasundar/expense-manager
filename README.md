@@ -47,6 +47,7 @@ This project is a web application designed to help users track their grocery exp
 ### Epic 6: Displaying and Correcting OCR Results (In Progress)
 
 *   In the React frontend, after a successful upload, redirect the user to a "Review Receipt" page (`/receipts/{id}/review`). The extracted text from the API response should be displayed on this page.
+*   Created a backend endpoint `POST /api/v1/receipts` that takes a store name, purchase date, and the extracted text. It should create new entries in the receipts and stores tables and return the new receipt_id. Update the upload flow to call this first.
 
 ### Epic 7: API Documentation (Completed)
 

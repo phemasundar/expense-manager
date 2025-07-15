@@ -1,5 +1,6 @@
 package com.expensetracker.expensetracker.controller;
 
+import com.expensetracker.expensetracker.dto.ReceiptDTO;
 import com.expensetracker.expensetracker.dto.UploadResponse;
 import com.expensetracker.expensetracker.entity.Receipt;
 import com.expensetracker.expensetracker.repository.ReceiptRepository;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/receipts")
@@ -21,6 +23,13 @@ public class ReceiptController {
     public ReceiptController(ReceiptService receiptService, ReceiptRepository receiptRepository) {
         this.receiptService = receiptService;
         this.receiptRepository = receiptRepository;
+    }
+
+    @Operation(summary = "Create a new receipt")
+    @PostMapping
+    public ResponseEntity<Map<String, Long>> createReceipt(@RequestBody ReceiptDTO receiptDTO) {
+        Receipt receipt = receiptService.createReceipt(receiptDTO);
+        return ResponseEntity.ok(Map.of("receipt_id", receipt.getId()));
     }
 
     @Operation(summary = "Upload a receipt image for OCR processing")

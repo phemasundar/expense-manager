@@ -1,21 +1,13 @@
 package com.expensetracker.expensetracker.dto;
 
 public class UploadResponse {
-    private Long id;
+
     private String extractedText;
+    private String imageUrl;
 
-    public UploadResponse(Long id, String extractedText) {
-        this.id = id;
+    public UploadResponse(String extractedText, String imageUrl) {
         this.extractedText = extractedText;
-    }
-
-    // Getters and Setters
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
+        this.imageUrl = imageUrl;
     }
 
     public String getExtractedText() {
@@ -25,4 +17,13 @@ public class UploadResponse {
     public void setExtractedText(String extractedText) {
         this.extractedText = extractedText;
     }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
 }
+
