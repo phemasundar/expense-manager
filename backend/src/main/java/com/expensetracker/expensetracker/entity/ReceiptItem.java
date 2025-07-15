@@ -1,5 +1,6 @@
 package com.expensetracker.expensetracker.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 
@@ -14,6 +15,7 @@ public class ReceiptItem {
 
     @ManyToOne
     @JoinColumn(name = "receipt_id", referencedColumnName = "receipt_id")
+    @JsonBackReference
     private Receipt receipt;
 
     @ManyToOne

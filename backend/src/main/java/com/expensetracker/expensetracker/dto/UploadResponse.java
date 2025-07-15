@@ -1,21 +1,21 @@
 package com.expensetracker.expensetracker.dto;
 
 public class UploadResponse {
-    private Long receiptId;
+    private Long id;
     private String extractedText;
 
-    public UploadResponse(Long receiptId, String extractedText) {
-        this.receiptId = receiptId;
+    public UploadResponse(Long id, String extractedText) {
+        this.id = id;
         this.extractedText = extractedText;
     }
 
     // Getters and Setters
-    public Long getReceiptId() {
-        return receiptId;
+    public Long getId() {
+        return id;
     }
 
-    public void setReceiptId(Long receiptId) {
-        this.receiptId = receiptId;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getExtractedText() {

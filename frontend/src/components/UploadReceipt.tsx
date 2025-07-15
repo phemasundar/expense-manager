@@ -1,18 +1,18 @@
 import React, { useState } from 'react';
 import { useAuth } from '@clerk/clerk-react';
+import { useNavigate } from 'react-router-dom';
 
 const UploadReceipt: React.FC = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
-  const [extractedText, setExtractedText] = useState<string | null>(null);
   const { getToken } = useAuth();
+  const navigate = useNavigate();
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
       setSelectedFile(file);
       setPreview(URL.createObjectURL(file));
-      setExtractedText(null);
     }
   };
 
@@ -37,8 +37,9 @@ const UploadReceipt: React.FC = () => {
       });
 
       if (response.ok) {
-        const text = await response.text();
-        setExtractedText(text);
+        const data = await response.json();
+        console.log('Upload response:', data);
+        navigate(`/receipts/${data.id}/review`);
       } else {
         alert('Upload failed. Please try again.');
       }
@@ -59,12 +60,6 @@ const UploadReceipt: React.FC = () => {
         <div>
           <h3>Image Preview:</h3>
           <img src={preview} alt="Selected receipt" style={{ maxWidth: '500px', maxHeight: '500px' }} />
-        </div>
-      )}
-      {extractedText && (
-        <div>
-          <h3>Extracted Text:</h3>
-          <pre>{extractedText}</pre>
         </div>
       )}
     </div>

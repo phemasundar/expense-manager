@@ -1,5 +1,6 @@
 package com.expensetracker.expensetracker.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -35,7 +36,8 @@ public class Receipt {
     @Column(name = "created_at")
     private ZonedDateTime createdAt;
 
-    @OneToMany(mappedBy = "receipt")
+    @OneToMany(mappedBy = "receipt", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<ReceiptItem> receiptItems;
 
     @Column(name = "extracted_text", columnDefinition = "TEXT")

@@ -25,16 +25,21 @@ public class ReceiptServiceImpl implements ReceiptService {
 
     @Override
     public UploadResponse processReceipt(MultipartFile file) throws IOException {
-        String extractedText = ocrService.extractTextFromImage(file.getBytes());
+        try {
+            String extractedText = ocrService.extractTextFromImage(file.getBytes());
 
-        Receipt receipt = new Receipt();
-        receipt.setImageUrl(""); // Placeholder for image URL
-        receipt.setExtractedText(extractedText);
-        receipt.setCreatedAt(ZonedDateTime.now());
-        receipt.setPurchaseDate(LocalDate.now()); // Placeholder for purchase date
+            Receipt receipt = new Receipt();
+            receipt.setImageUrl(""); // Placeholder for image URL
+            receipt.setExtractedText(extractedText);
+            receipt.setCreatedAt(ZonedDateTime.now());
+            receipt.setPurchaseDate(LocalDate.now()); // Placeholder for purchase date
 
-        Receipt savedReceipt = receiptRepository.save(receipt);
+            Receipt savedReceipt = receiptRepository.save(receipt);
 
-        return new UploadResponse(savedReceipt.getId(), extractedText);
+            return new UploadResponse(savedReceipt.getId(), extractedText);
+        } catch (IOException e) {
+            // Log the error and re-throw a more specific exception
+            throw new IOException("Error processing receipt image: " + e.getMessage(), e);
+        }
     }
 }

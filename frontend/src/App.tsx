@@ -7,6 +7,7 @@ import HealthCheck from './HealthCheck';
 import Dashboard from './components/Dashboard';
 import UploadReceipt from './components/UploadReceipt';
 import SignInPage from './components/SignInPage';
+import ReviewReceipt from './components/ReviewReceipt';
 
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { isSignedIn, isLoaded } = useAuth();
@@ -44,6 +45,14 @@ const App: React.FC = () => {
               element={
                 <ProtectedRoute>
                   <UploadReceipt />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/receipts/:id/review"
+              element={
+                <ProtectedRoute>
+                  <ReviewReceipt />
                 </ProtectedRoute>
               }
             />
