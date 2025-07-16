@@ -69,7 +69,11 @@ We will begin with a **modular monolithic architecture**. This approach provides
   * **CI/CD**: **GitHub Actions**.
   * **Deployment**: **Docker**.
 
-## 4. Project Structure
+## 4. Conventions
+
+*   **Lombok**: Use Lombok annotations (`@Data`, `@NoArgsConstructor`, `@AllArgsConstructor`, `@RequiredArgsConstructor`, etc.) in all new Java classes to reduce boilerplate code.
+
+## 5. Project Structure
 
 ```
 C:/Projects/ExpenseManager/
@@ -127,7 +131,7 @@ C:/Projects/ExpenseManager/
 └───README.md
 ```
 
-## 5. Database Schema (PostgreSQL)
+## 6. Database Schema (PostgreSQL)
 
 The database schema remains the same, designed to hold all necessary data in a relational structure.
 
@@ -170,7 +174,7 @@ CREATE TABLE receipt_items (
 );
 ```
 
-## 6. API Endpoints
+## 7. API Endpoints
 
 The Spring Boot application will expose a single, unified REST API.
 
@@ -186,7 +190,7 @@ The Spring Boot application will expose a single, unified REST API.
       * `PUT /receipt-items/{id}`: Update a specific line item on a receipt (for corrections).
       * `DELETE /receipts/{id}`: Delete a receipt and its associated items.
 
-## 7. CI/CD Pipeline (GitHub Actions)
+## 8. CI/CD Pipeline (GitHub Actions)
 
 The CI/CD pipeline with **GitHub Actions** will be streamlined for the monolithic architecture.
 
@@ -201,7 +205,7 @@ The CI/CD pipeline with **GitHub Actions** will be streamlined for the monolithi
       * **Push to Registry**: Push the final Docker image to a container registry (e.g., Docker Hub, GitHub Container Registry).
       * **Deploy**: Trigger a deployment of the new container to a hosting service (e.g., a VPS, AWS EC2, or a platform like Heroku/Render).
 
-## 8. Development Plan
+## 9. Development Plan
 
 ### Epic 1: Project Foundation & Backend Setup (Completed)
 
@@ -250,7 +254,7 @@ The CI/CD pipeline with **GitHub Actions** will be streamlined for the monolithi
 
 *   **Task 7.1: Generate Swagger documentation for the existing APIs.** (Completed)
 
-## 9. Future Plans
+## 10. Future Plans
 
   * **Migration to Microservices**: As the application scales, the modular design of the monolith will allow us to break out individual modules (e.g., Analytics, User management) into separate microservices with minimal friction.
   * **Cloud Database/Spreadsheet Integration**: Support for Google Sheets or other cloud databases as a data source or destination.
