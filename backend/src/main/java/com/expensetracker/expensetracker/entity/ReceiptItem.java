@@ -2,10 +2,13 @@ package com.expensetracker.expensetracker.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
+import lombok.Data;
+
 import java.math.BigDecimal;
 
 @Entity
 @Table(name = "receipt_items")
+@Data
 public class ReceiptItem {
 
     @Id
@@ -28,5 +31,4 @@ public class ReceiptItem {
     @Column(name = "price", nullable = false)
     private BigDecimal price;
 
-    // Getters and Setters
 }

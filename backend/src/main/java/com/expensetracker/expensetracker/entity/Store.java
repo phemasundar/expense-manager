@@ -1,9 +1,11 @@
 package com.expensetracker.expensetracker.entity;
 
 import jakarta.persistence.*;
+import lombok.Data;
 
 @Entity
 @Table(name = "stores")
+@Data
 public class Store {
 
     @Id
@@ -17,9 +19,4 @@ public class Store {
     @Column(name = "location")
     private String location;
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    // Getters and Setters
 }

@@ -9,6 +9,7 @@ import com.expensetracker.expensetracker.repository.StoreRepository;
 import com.expensetracker.expensetracker.service.FileStorageService;
 import com.expensetracker.expensetracker.service.OcrService;
 import com.expensetracker.expensetracker.service.ReceiptService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -16,19 +17,13 @@ import java.io.IOException;
 import java.time.ZonedDateTime;
 
 @Service
+@RequiredArgsConstructor
 public class ReceiptServiceImpl implements ReceiptService {
 
     private final OcrService ocrService;
     private final ReceiptRepository receiptRepository;
     private final StoreRepository storeRepository;
     private final FileStorageService fileStorageService;
-
-    public ReceiptServiceImpl(OcrService ocrService, ReceiptRepository receiptRepository, StoreRepository storeRepository, FileStorageService fileStorageService) {
-        this.ocrService = ocrService;
-        this.receiptRepository = receiptRepository;
-        this.storeRepository = storeRepository;
-        this.fileStorageService = fileStorageService;
-    }
 
     @Override
     public UploadResponse processReceipt(MultipartFile file) throws IOException {

@@ -6,6 +6,7 @@ import com.expensetracker.expensetracker.entity.Receipt;
 import com.expensetracker.expensetracker.repository.ReceiptRepository;
 import com.expensetracker.expensetracker.service.ReceiptService;
 import io.swagger.v3.oas.annotations.Operation;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -15,15 +16,11 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/receipts")
+@RequiredArgsConstructor
 public class ReceiptController {
 
     private final ReceiptService receiptService;
     private final ReceiptRepository receiptRepository;
-
-    public ReceiptController(ReceiptService receiptService, ReceiptRepository receiptRepository) {
-        this.receiptService = receiptService;
-        this.receiptRepository = receiptRepository;
-    }
 
     @Operation(summary = "Create a new receipt")
     @PostMapping

@@ -2,6 +2,10 @@ package com.expensetracker.expensetracker.entity;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
@@ -9,6 +13,9 @@ import java.util.List;
 
 @Entity
 @Table(name = "receipts")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Receipt {
 
     @Id
@@ -43,83 +50,4 @@ public class Receipt {
     @Column(name = "extracted_text", columnDefinition = "TEXT")
     private String extractedText;
 
-    public Receipt() {
-    }
-
-    public Receipt(String imageUrl, String extractedText) {
-        this.imageUrl = imageUrl;
-        this.extractedText = extractedText;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public Store getStore() {
-        return store;
-    }
-
-    public void setStore(Store store) {
-        this.store = store;
-    }
-
-    public String getImageUrl() {
-        return imageUrl;
-    }
-
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
-    }
-
-    public LocalDate getPurchaseDate() {
-        return purchaseDate;
-    }
-
-    public void setPurchaseDate(LocalDate purchaseDate) {
-        this.purchaseDate = purchaseDate;
-    }
-
-    public BigDecimal getTotalAmount() {
-        return totalAmount;
-    }
-
-    public void setTotalAmount(BigDecimal totalAmount) {
-        this.totalAmount = totalAmount;
-    }
-
-    public ZonedDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(ZonedDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public List<ReceiptItem> getReceiptItems() {
-        return receiptItems;
-    }
-
-    public void setReceiptItems(List<ReceiptItem> receiptItems) {
-        this.receiptItems = receiptItems;
-    }
-
-    public String getExtractedText() {
-        return extractedText;
-    }
-
-    public void setExtractedText(String extractedText) {
-        this.extractedText = extractedText;
-    }
 }
