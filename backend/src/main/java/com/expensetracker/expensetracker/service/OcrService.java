@@ -2,6 +2,7 @@ package com.expensetracker.expensetracker.service;
 
 import com.google.cloud.vision.v1.*;
 import com.google.protobuf.ByteString;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
@@ -17,6 +18,9 @@ import java.util.List;
 public class OcrService {
 
     private static final String SERIALIZED_RESPONSES_DIR = "backend/serialized-responses/";
+
+    @Value("${app.ocr.caching.enabled:false}")
+    private boolean ocrCachingEnabled;
 
     /**
      * Extracts and formats text from an image file using the Google Cloud Vision API.
@@ -43,25 +47,20 @@ public class OcrService {
      */
     public String extractTextFromImage(byte[] imageBytes) throws IOException {
         try {
-            String imageHash = toSHA256(imageBytes);
-            String serializedFilePath = SERIALIZED_RESPONSES_DIR + imageHash + ".ser";
-
             BatchAnnotateImagesResponse response;
-            if (Files.exists(Paths.get(serializedFilePath))) {
-                response = deserializeResponse(serializedFilePath);
-            } else {
-                try (ImageAnnotatorClient vision = ImageAnnotatorClient.create()) {
-                    ByteString imgBytes = ByteString.copyFrom(imageBytes);
 
-                    List<AnnotateImageRequest> requests = new ArrayList<>();
-                    Image img = Image.newBuilder().setContent(imgBytes).build();
-                    Feature feat = Feature.newBuilder().setType(Feature.Type.DOCUMENT_TEXT_DETECTION).build();
-                    AnnotateImageRequest request = AnnotateImageRequest.newBuilder().addFeatures(feat).setImage(img).build();
-                    requests.add(request);
+            if (ocrCachingEnabled) {
+                String imageHash = toSHA256(imageBytes);
+                String serializedFilePath = SERIALIZED_RESPONSES_DIR + imageHash + ".ser";
 
-                    response = vision.batchAnnotateImages(requests);
+                if (Files.exists(Paths.get(serializedFilePath))) {
+                    response = deserializeResponse(serializedFilePath);
+                } else {
+                    response = fetchFromGoogleVisionApi(imageBytes);
                     serializeResponse(response, serializedFilePath);
                 }
+            } else {
+                response = fetchFromGoogleVisionApi(imageBytes);
             }
 
             List<AnnotateImageResponse> responses = response.getResponsesList();
@@ -108,6 +107,21 @@ public class OcrService {
             throw new RuntimeException("Could not generate hash for image", e);
         }
     }
+
+    private BatchAnnotateImagesResponse fetchFromGoogleVisionApi(byte[] imageBytes) throws IOException {
+        try (ImageAnnotatorClient vision = ImageAnnotatorClient.create()) {
+            ByteString imgBytes = ByteString.copyFrom(imageBytes);
+
+            List<AnnotateImageRequest> requests = new ArrayList<>();
+            Image img = Image.newBuilder().setContent(imgBytes).build();
+            Feature feat = Feature.newBuilder().setType(Feature.Type.DOCUMENT_TEXT_DETECTION).build();
+            AnnotateImageRequest request = AnnotateImageRequest.newBuilder().addFeatures(feat).setImage(img).build();
+            requests.add(request);
+
+            return vision.batchAnnotateImages(requests);
+        }
+    }
+
 
     /**
      * Reconstructs the text of a single paragraph from its constituent words and symbols.
