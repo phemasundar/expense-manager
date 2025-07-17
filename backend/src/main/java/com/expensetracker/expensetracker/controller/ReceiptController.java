@@ -1,9 +1,11 @@
 package com.expensetracker.expensetracker.controller;
 
-import com.expensetracker.expensetracker.dto.ReceiptDTO;
-import com.expensetracker.expensetracker.dto.UploadResponse;
+import com.expensetracker.expensetracker.dto.ParsedReceiptDTO;
+import com.expensetracker.expensetracker.dto.SaveReceiptRequestDTO;
 import com.expensetracker.expensetracker.entity.Receipt;
 import com.expensetracker.expensetracker.repository.ReceiptRepository;
+import com.expensetracker.expensetracker.service.OcrService;
+import com.expensetracker.expensetracker.service.ParsingService;
 import com.expensetracker.expensetracker.service.ReceiptService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -21,20 +23,23 @@ public class ReceiptController {
 
     private final ReceiptService receiptService;
     private final ReceiptRepository receiptRepository;
+    private final OcrService ocrService;
+    private final ParsingService parsingService;
 
     @Operation(summary = "Create a new receipt")
     @PostMapping
-    public ResponseEntity<Map<String, Long>> createReceipt(@RequestBody ReceiptDTO receiptDTO) {
-        Receipt receipt = receiptService.createReceipt(receiptDTO);
+    public ResponseEntity<Map<String, Long>> createReceipt(@RequestBody SaveReceiptRequestDTO saveReceiptRequestDTO) {
+        Receipt receipt = receiptService.createReceipt(saveReceiptRequestDTO);
         return ResponseEntity.ok(Map.of("receipt_id", receipt.getId()));
     }
 
     @Operation(summary = "Upload a receipt image for OCR processing")
     @PostMapping("/upload")
-    public ResponseEntity<UploadResponse> uploadReceipt(@RequestParam("file") MultipartFile file) {
+    public ResponseEntity<ParsedReceiptDTO> uploadReceipt(@RequestParam("file") MultipartFile file) {
         try {
-            UploadResponse response = receiptService.processReceipt(file);
-            return ResponseEntity.ok(response);
+            String rawText = ocrService.extractTextFromImage(file.getBytes());
+            ParsedReceiptDTO parsedReceipt = parsingService.parseReceiptText(rawText);
+            return ResponseEntity.ok(parsedReceipt);
         } catch (IOException e) {
             e.printStackTrace();
             return ResponseEntity.status(500).build();

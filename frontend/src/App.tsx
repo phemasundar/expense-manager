@@ -49,10 +49,19 @@ const App: React.FC = () => {
               }
             />
             <Route
-              path="/receipts/:id/review"
+              path="/receipts/review"
               element={
                 <ProtectedRoute>
                   <ReviewReceipt />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/receipts/:id"
+              element={
+                <ProtectedRoute>
+                  {/* This will be the component to display the saved receipt */}
+                  <div>Receipt Details</div>
                 </ProtectedRoute>
               }
             />
