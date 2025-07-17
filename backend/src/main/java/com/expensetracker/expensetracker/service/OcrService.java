@@ -4,12 +4,19 @@ import com.google.cloud.vision.v1.*;
 import com.google.protobuf.ByteString;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class OcrService {
+
+    private static final String SERIALIZED_RESPONSES_DIR = "backend/serialized-responses/";
 
     /**
      * Extracts and formats text from an image file using the Google Cloud Vision API.
@@ -35,16 +42,28 @@ public class OcrService {
      * @throws IOException If an error occurs during the API communication.
      */
     public String extractTextFromImage(byte[] imageBytes) throws IOException {
-        try (ImageAnnotatorClient vision = ImageAnnotatorClient.create()) {
-            ByteString imgBytes = ByteString.copyFrom(imageBytes);
+        try {
+            String imageHash = toSHA256(imageBytes);
+            String serializedFilePath = SERIALIZED_RESPONSES_DIR + imageHash + ".ser";
 
-            List<AnnotateImageRequest> requests = new ArrayList<>();
-            Image img = Image.newBuilder().setContent(imgBytes).build();
-            Feature feat = Feature.newBuilder().setType(Feature.Type.DOCUMENT_TEXT_DETECTION).build();
-            AnnotateImageRequest request = AnnotateImageRequest.newBuilder().addFeatures(feat).setImage(img).build();
-            requests.add(request);
+            BatchAnnotateImagesResponse response;
+            if (Files.exists(Paths.get(serializedFilePath))) {
+                response = deserializeResponse(serializedFilePath);
+            } else {
+                try (ImageAnnotatorClient vision = ImageAnnotatorClient.create()) {
+                    ByteString imgBytes = ByteString.copyFrom(imageBytes);
 
-            BatchAnnotateImagesResponse response = vision.batchAnnotateImages(requests);
+                    List<AnnotateImageRequest> requests = new ArrayList<>();
+                    Image img = Image.newBuilder().setContent(imgBytes).build();
+                    Feature feat = Feature.newBuilder().setType(Feature.Type.DOCUMENT_TEXT_DETECTION).build();
+                    AnnotateImageRequest request = AnnotateImageRequest.newBuilder().addFeatures(feat).setImage(img).build();
+                    requests.add(request);
+
+                    response = vision.batchAnnotateImages(requests);
+                    serializeResponse(response, serializedFilePath);
+                }
+            }
+
             List<AnnotateImageResponse> responses = response.getResponsesList();
 
             if (responses.isEmpty() || responses.get(0).hasError()) {
@@ -68,10 +87,10 @@ public class OcrService {
 
                 // **Hybrid Logic**: Check for content (price) first, then fall back to geometry.
                 // If the current paragraph contains a price, it's the end of a line item. Force a newline.
-                if (currentParagraphText.matches(".*F\s+\\$[\\d\\.]+")) {
+                /*if (currentParagraphText.matches(".*F\s+\\$[\\d\\.]+")) {
                     formattedText.append(System.lineSeparator());
                     continue; // Skip the geometric check and move to the next paragraph.
-                }
+                }*/
 
                 // If no price was found, use the geometric check to see if the next paragraph is on the same line.
                 if (i + 1 < paragraphs.size()) {
@@ -85,6 +104,8 @@ public class OcrService {
             }
             String string = formattedText.toString();
             return string;
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException("Could not generate hash for image", e);
         }
     }
 
@@ -117,6 +138,34 @@ public class OcrService {
 
         // Heuristic: Check if the vertical centers are within half the height of the first paragraph.
         // This allows for some vertical tolerance.
-        return Math.abs(p1CenterY - p2CenterY) < p1Height / 2.0;
+        return Math.abs(p1CenterY - p2CenterY) < p1Height / 2;
+    }
+
+    private void serializeResponse(BatchAnnotateImagesResponse response, String filePath) throws IOException {
+        Path path = Paths.get(filePath);
+        Files.createDirectories(path.getParent());
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filePath))) {
+            oos.writeObject(response);
+        }
+    }
+
+    private BatchAnnotateImagesResponse deserializeResponse(String filePath) throws IOException {
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(filePath))) {
+            return (BatchAnnotateImagesResponse) ois.readObject();
+        } catch (ClassNotFoundException e) {
+            throw new IOException("Could not deserialize response", e);
+        }
+    }
+
+    private String toSHA256(byte[] data) throws NoSuchAlgorithmException {
+        MessageDigest digest = MessageDigest.getInstance("SHA-256");
+        byte[] hash = digest.digest(data);
+        StringBuilder hexString = new StringBuilder();
+        for (byte b : hash) {
+            String hex = Integer.toHexString(0xff & b);
+            if (hex.length() == 1) hexString.append('0');
+            hexString.append(hex);
+        }
+        return hexString.toString();
     }
 }
